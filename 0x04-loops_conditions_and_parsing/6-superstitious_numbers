@@ -1,15 +1,15 @@
-#!/usr/bin/env bas
+#!/usr/bin/env bash
 
 count=1
 
 while [ $count -le 20 ]; do
-echo "$count"
-count=$((count + 1))
-if [ $count -eq 4 ];then
-echo "bad luck from China"
-elif [ $count -eq 9 ];then
-echo "bad luck from Japan"
-elif [ $count -eq 17 ];then
-echo "bad luck from Italy"
-fi
+  echo "$count"
+  count=$((count + 1))  # Increment count here
+  if [ $count -eq 4 ]; then
+    echo "bad luck from China"
+  elif [ $count -eq 9 ]; then
+    echo "bad luck from Japan"
+  elif [ $count -eq 17 ]; then
+    echo "bad luck from Italy"
+  fi
 done
