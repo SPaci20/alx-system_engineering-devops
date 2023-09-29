@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#Give information about school file
+# Gives information about school file
 
 if [ -f school ]; then
 	echo "school file exists"
