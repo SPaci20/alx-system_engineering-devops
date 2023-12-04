@@ -1,22 +1,28 @@
 #!/bin/env bash
-# Script that Configure Nginx so that its HTTP response contains a custom header
+#Script that Configure Nginx so that its HTTP response contains a custom header 
 
-if [ "$(id -u)" -ne 0 ]; then
-    echo "This script must be run as root."
-    exit 1
-fi
+# Install Nginx
+sudo apt-get update
+sudo apt-get install -y nginx
 
-apt-get -y update
-apt-get -y install nginx
+# Create Nginx configuration file
+echo "
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
 
-echo "Hello World!" > /var/www/html/index.nginx-debian.html
+    server_name _;
 
-echo "Ceci n'est pas une page" > /usr/share/nginx/html/custom_404.html
+    location / {
+        add_header X-Served-By \$host;
+    }
+}
+" | sudo tee /etc/nginx/sites-available/custom_header > /dev/null
 
-sed -i '/server_name _;/a \\n\trewrite ^\/redirect_me https:\/\/github.com\/SPaci20 permanent;\n\n\terror_page 404 \/custom_404.html;\n\tlocation = \/custom_404.html {\n\t\troot \/usr\/share\/nginx\/html;\n\t\tinternal;\n\t}' /etc/nginx/sites-available/default
+# Create a symbolic link
+sudo ln -s /etc/nginx/sites-available/custom_header /etc/nginx/sites-enabled/
 
-sed -i 's/include \/etc\/nginx\/sites-enabled\/\*;/include \/etc\/nginx\/sites-enabled\/\*;\n\tadd_header X-Served-By "$HOSTNAME";/' /etc/nginx/nginx.conf
+# Test Nginx configuration
+sudo nginx -t
 
-systemctl start nginx
-
-echo "Nginx configured with custom header X-Served-By on $HOSTNAME"
+sudo service nginx restart
